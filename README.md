@@ -71,7 +71,7 @@ Abeja/
 └── README.md
 ```
 
-Los antiguos `targets-abeja.mind` y `targetscolmena.mind` ya no se utilizan y se retiraron del proyecto.
+
 
 ## Funcionamiento y publicación
 
