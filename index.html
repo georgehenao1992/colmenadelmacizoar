@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#101510">
+  <meta name="description" content="Experiencia educativa de realidad aumentada: descubre la abeja apuntando la cámara al marcador.">
+  <title>Vuelo de Abeja · Realidad Aumentada</title>
+  <link rel="stylesheet" href="style.css?v=20260919-photo">
+  <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+</head>
+<body>
+  <main id="app">
+    <header class="topbar">
+      <div class="brand" aria-label="Vuelo de Abeja"><span class="brand-mark" aria-hidden="true">⬡</span><div><strong>Vuelo de Abeja</strong><small>Experiencia AR</small></div></div>
+      <button id="helpButton" class="icon-button" type="button" aria-label="Ver instrucciones">?</button>
+    </header>
+    <section id="welcome" class="panel welcome" aria-labelledby="welcomeTitle">
+      <div class="bee-icon" aria-hidden="true">🐝</div>
+      <p class="eyebrow">Explora en realidad aumentada</p>
+      <h1 id="welcomeTitle">Una abeja está por aterrizar</h1>
+      <p>Apunta la cámara a uno de los marcadores y descubre la abeja o su colmena en 3D.</p>
+      <ol class="steps"><li><span>1</span>Permite el acceso a la cámara</li><li><span>2</span>Enfoca cualquiera de los cuatro marcadores</li><li><span>3</span>Explora el modelo 3D detectado</li></ol>
+      <button id="startButton" class="primary-button" type="button">Iniciar experiencia</button>
+      <p class="privacy">La cámara se procesa en tu dispositivo. Tus recuerdos solo se guardan o comparten cuando tú lo eliges.</p>
+    </section>
+    <section id="scannerUi" class="scanner-ui" hidden>
+      <div id="status" class="status" role="status" aria-live="polite"><span class="status-dot" aria-hidden="true"></span><span id="statusText">Preparando cámara…</span></div>
+      <div id="reticle" class="reticle" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <p id="scanHint" class="scan-hint">Alinea el marcador dentro del recuadro</p>
+      <article id="beeCard" class="bee-card" hidden><button id="closeCard" type="button" aria-label="Cerrar información">×</button><p id="cardEyebrow" class="eyebrow">Apis mellifera</p><h2 id="cardTitle">Abeja melífera</h2><p id="cardText">Una polinizadora esencial: al visitar flores ayuda a sostener ecosistemas y cultivos.</p></article>
+      <p id="photoStatus" class="photo-status" role="status" aria-live="polite"></p>
+      <nav class="controls" aria-label="Controles del modelo"><button id="infoButton" type="button" disabled><span>i</span>Conocer</button><button id="animationButton" type="button" disabled><span>Ⅱ</span>Pausar</button><button id="resetButton" type="button" disabled><span>↻</span>Reiniciar</button><button id="photoButton" type="button" disabled aria-label="Tomar foto de recuerdo"><span aria-hidden="true">📸</span>Recuerdo</button></nav>
+    </section>
+    <section id="errorPanel" class="panel error-panel" hidden role="alert"><div class="error-icon" aria-hidden="true">!</div><h2>No pudimos abrir la cámara</h2><p id="errorMessage">Revisa el permiso de cámara e inténtalo de nuevo.</p><button id="retryButton" class="primary-button" type="button">Intentar de nuevo</button></section>
+    <dialog id="helpDialog"><button id="closeHelp" class="dialog-close" type="button" aria-label="Cerrar">×</button><p class="eyebrow">Consejos de detección</p><h2>Encuentra el marcador</h2><ul><li>Usa un lugar bien iluminado, sin reflejos.</li><li>Mantén visible el marcador completo.</li><li>Empieza a unos 30–50 cm de distancia.</li></ul></dialog>
+    <a-scene id="arScene" mindar-image="imageTargetSrc: ./targets.mind?v=20260918-4; maxTrack: 2; autoStart: false; uiLoading: no; uiScanning: no; uiError: no; filterMinCF: 0.0001; filterBeta: 0.001" color-space="sRGB" renderer="colorManagement: true; physicallyCorrectLights: false; toneMapping: ACESFilmic; exposure: 1.35; antialias: true; alpha: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" embedded>
+      <a-assets timeout="60000">
+        <a-asset-item id="beeAsset" src="./imagenes/abeja.glb"></a-asset-item>
+        <a-asset-item id="hiveAsset" src="./imagenes/colmena.glb"></a-asset-item>
+        <a-asset-item id="hive2Asset" src="./imagenes/colmena2.glb"></a-asset-item>
+        <a-asset-item id="fullHiveAsset" src="./imagenes/colmenacompleta.glb"></a-asset-item>
+      </a-assets>
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+      <a-light type="ambient" color="#fff8e8" intensity="1.25"></a-light>
+      <a-light type="hemisphere" color="#fff4d6" ground-color="#71806a" intensity="1.15"></a-light>
+      <a-light type="directional" color="#ffffff" intensity="1.8" position="-1 2 2"></a-light>
+      <a-light type="directional" color="#ffdca0" intensity="0.8" position="2 1 1"></a-light>
+      <a-entity id="beeTarget" mindar-image-target="targetIndex: 0"><a-entity id="beePivot" class="model-pivot" position="0 0.08 0.08" scale="0.8 0.8 0.8" data-default-scale="0.8 0.8 0.8"><a-gltf-model id="beeModel" class="ar-model" src="#beeAsset" animation="property: rotation; to: 0 360 0; loop: true; dur: 7000; easing: linear"></a-gltf-model></a-entity></a-entity>
+      <a-entity id="hiveTarget" mindar-image-target="targetIndex: 1"><a-entity id="hivePivot" class="model-pivot" position="0 0.08 0.08" scale="0.8 0.8 0.8" data-default-scale="0.8 0.8 0.8"><a-gltf-model id="hiveModel" class="ar-model" src="#hiveAsset" animation="property: rotation; to: 0 360 0; loop: true; dur: 9000; easing: linear"></a-gltf-model></a-entity></a-entity>
+      <a-entity id="hive2Target" mindar-image-target="targetIndex: 2"><a-entity id="hive2Pivot" class="model-pivot" position="0 0.08 0.08" scale="0.8 0.8 0.8" data-default-scale="0.8 0.8 0.8"><a-gltf-model id="hive2Model" class="ar-model" src="#hive2Asset" animation="property: rotation; to: 0 360 0; loop: true; dur: 9000; easing: linear"></a-gltf-model></a-entity></a-entity>
+      <a-entity id="fullHiveTarget" mindar-image-target="targetIndex: 3"><a-entity id="fullHivePivot" class="model-pivot" position="0 0.08 0.08" scale="0.8 0.8 0.8" data-default-scale="0.8 0.8 0.8"><a-gltf-model id="fullHiveModel" class="ar-model" src="#fullHiveAsset" animation="property: rotation; to: 0 360 0; loop: true; dur: 9000; easing: linear"></a-gltf-model></a-entity></a-entity>
+    </a-scene>
+  </main>
+  <dialog id="photoDialog" class="photo-dialog" aria-labelledby="photoTitle">
+    <button id="closePhoto" class="dialog-close" type="button" aria-label="Cerrar recuerdo">×</button>
+    <header class="photo-heading">
+      <p class="eyebrow">Un recuerdo para llevar</p>
+      <h2 id="photoTitle">Mi visita a colmena del macizo</h2>
+    </header>
+    <div class="photo-frame"><img id="photoPreview" alt="Foto de tu visita con la cámara y los modelos de realidad aumentada visibles"></div>
+    <div class="photo-actions">
+      <a id="downloadPhoto" class="primary-button" download>Descargar foto</a>
+      <button id="sharePhoto" class="photo-secondary" type="button" hidden>Compartir</button>
+      <button id="retakePhoto" class="photo-secondary" type="button">Volver a la cámara</button>
+    </div>
+    <p id="photoFeedback" class="photo-feedback" role="status" aria-live="polite">Tu foto se genera en este dispositivo. Puedes descargarla o mantenerla pulsada para guardarla.</p>
+  </dialog>
+  <noscript>Esta experiencia necesita JavaScript para usar la cámara y mostrar realidad aumentada.</noscript>
+  <script src="script.js"></script>
+  <script src="souvenir.js?v=20260919-photo"></script>
+</body>
+</html>
